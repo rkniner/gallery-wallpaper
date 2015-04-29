@@ -141,8 +141,9 @@ public class GalleryWallpaper extends WallpaperService {
 			public void run() {
 				synchronized(Engine.this) {
 					Engine.this.replaceRequired = true;
+					/*Engine.this.handler.removeCallbacks(this);
 					if (Engine.this.isVisible()) 
-						Engine.this.handler.postDelayed(this, Engine.this.refreshDelay);
+						Engine.this.handler.postDelayed(this, Engine.this.refreshDelay);*/
 				}
 				Engine.this.redrawImage();
 			}
@@ -151,7 +152,8 @@ public class GalleryWallpaper extends WallpaperService {
 			public void run() {
 				synchronized(Engine.this) {
 					Engine.this.syncRequired = true;
-					Engine.this.handler.postDelayed(this, Engine.this.resyncDelay);
+					/*Engine.this.handler.removeCallbacks(this);
+					Engine.this.handler.postDelayed(this, Engine.this.resyncDelay);*/
 				}
 				if (Engine.this.isVisible()) Engine.this.recreateImageList(false);
 			}
@@ -165,9 +167,9 @@ public class GalleryWallpaper extends WallpaperService {
 				redrawImage();
                 return true;
             }
-            public boolean onDown(MotionEvent e) {
+            /*public boolean onDown(MotionEvent e) {
                 return true;
-            }
+            }*/
 		}
 		
 		private GestureDetector gestureDetector = new GestureDetector(
@@ -258,6 +260,8 @@ public class GalleryWallpaper extends WallpaperService {
 				this.changedSearch = false;
 			}
 			grabber.refreshImageList();
+			handler.removeCallbacks(timerGetImages);
+			handler.postDelayed(timerGetImages, resyncDelay);
 			this.syncRequired = false;
 		}
 		
@@ -273,6 +277,7 @@ public class GalleryWallpaper extends WallpaperService {
 			this.replaceRequired = false;
 			this.redrawRequired = true;
 			rescaleImage();
+			handler.removeCallbacks(timerRefresh);
 			handler.postDelayed(timerRefresh, refreshDelay);
 		}
 		
